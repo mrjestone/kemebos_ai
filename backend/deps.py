@@ -2,15 +2,20 @@
 from bson import ObjectId
 from bson.errors import InvalidId
 from fastapi import Cookie, Depends, HTTPException
+from pymongo.errors import PyMongoError
 
 from .db import ensure_admin, ensure_indexes, get_db
 from .security import COOKIE, read_token
 
 
 def db():
-    database = get_db()
-    ensure_indexes(database)
-    ensure_admin(database)
+    try:
+        database = get_db()
+        ensure_indexes(database)
+        ensure_admin(database)
+    except (PyMongoError, RuntimeError):
+        # e.g. Atlas blocking this server's IP, or a bad MONGODB_URI: answer cleanly, not with a crash
+        raise HTTPException(503, {"code": "db_unavailable"})
     return database
 
 

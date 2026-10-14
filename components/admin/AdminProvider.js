@@ -9,6 +9,7 @@ export const useAdmin = () => useContext(AdminContext);
 
 const ERROR_TEXT = {
   network: "Can't reach the server.",
+  db_unavailable: "The database is temporarily unavailable.",
   validation: "Please check the details and try again.",
 };
 

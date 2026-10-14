@@ -11,6 +11,7 @@ const ERRORS = {
   email_taken: "Email already registered.",
   validation: "Please check your details and try again.",
   network: "Can't reach the server. Check your connection.",
+  db_unavailable: "The service is temporarily unavailable. Try again shortly.",
 };
 
 const ROLES = [

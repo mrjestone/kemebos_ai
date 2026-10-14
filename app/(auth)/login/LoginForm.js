@@ -13,6 +13,7 @@ const MESSAGES = {
   pending: { tone: "info", text: "Awaiting admin approval." },
   blocked: { tone: "error", text: "This account is not active." },
   network: { tone: "error", text: "Can't reach the server. Check your connection." },
+  db_unavailable: { tone: "error", text: "The service is temporarily unavailable. Try again shortly." },
   default: { tone: "error", text: "Something went wrong. Please try again." },
 };
 

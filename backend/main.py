@@ -3,6 +3,7 @@ import time
 
 from fastapi import FastAPI
 from fastapi.concurrency import run_in_threadpool
+from fastapi.responses import JSONResponse
 
 from .db import get_db
 from .rag import embeddings
@@ -24,6 +25,16 @@ app.include_router(chat.router)
 @app.get("/api/health", tags=["system"])
 def health():
     return {"ok": True}
+
+
+@app.get("/api/health/db", tags=["system"])
+def health_db():
+    """Open this in a browser to test the database connection. Shows the error TYPE only (no secrets)."""
+    try:
+        get_db().command("ping")
+        return {"ok": True}
+    except Exception as exc:
+        return JSONResponse({"ok": False, "error": exc.__class__.__name__}, status_code=503)
 
 
 _last_warm = 0.0

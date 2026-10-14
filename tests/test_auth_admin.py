@@ -82,3 +82,18 @@ def test_health_and_warmup(client, monkeypatch):
     monkeypatch.setattr("backend.main._last_warm", 0.0)
     assert client.get("/api/warmup").json() == {"warm": True}
     assert client.get("/api/warmup").json()["skipped"] is True  # throttled
+
+
+def test_database_outage_returns_clean_503(client, monkeypatch):
+    from pymongo.errors import ServerSelectionTimeoutError
+
+    def down(_):
+        raise ServerSelectionTimeoutError("SSL handshake failed")
+
+    monkeypatch.setattr("backend.deps.ensure_indexes", down)
+    r = client.post("/api/auth/login", json={"email": "a@b.org", "password": "x"})
+    assert r.status_code == 503 and r.json()["detail"] == {"code": "db_unavailable"}
+
+    monkeypatch.setattr("backend.main.get_db", lambda: (_ for _ in ()).throw(ServerSelectionTimeoutError("x")))
+    r = client.get("/api/health/db")
+    assert r.status_code == 503 and r.json() == {"ok": False, "error": "ServerSelectionTimeoutError"}
