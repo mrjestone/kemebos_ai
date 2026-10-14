@@ -1,6 +1,6 @@
 import LoginForm from "./LoginForm";
 
-export const metadata = { title: "Sign in · Kaizerege & Kemebos AI Assistant" };
+export const metadata = { title: "Sign in · Kaizirege & Kemebos AI Assistant" };
 
 export default function LoginPage() {
   return (

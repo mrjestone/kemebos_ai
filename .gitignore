@@ -46,3 +46,7 @@ next-env.d.ts
 __pycache__/
 *.pyc
 .pytest_cache/
+
+# working notes and private data (never commit)
+next-session-brief.md
+data/private/

@@ -1,10 +1,10 @@
-# Kaizerege & Kemebos AI Assistant — Project Brief
+# Kaizirege & Kemebos AI Assistant — Project Brief
 
 Living document: decisions made during the planning interview. Update it every session so context carries over.
 
 ## Purpose
 Graduation project (CS student). Goal is to **demonstrate knowledge**, so architecture and every layer must be explainable.
-An AI assistant for a school (Kaizerege & Kemebos) that answers questions about how to do things and general info.
+An AI assistant for a school (Kaizirege & Kemebos) that answers questions about how to do things and general info.
 - Anyone (guests) can ask public questions, e.g. "When is parents day?".
 - Approved members of the organization also get private answers.
 

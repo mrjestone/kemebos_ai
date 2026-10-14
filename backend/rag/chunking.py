@@ -1,8 +1,8 @@
 """Split long text into overlapping, paragraph-aware chunks for embedding."""
 import re
 
-SIZE = 900      # target characters per chunk (~200 words)
-OVERLAP = 120   # characters repeated between chunks so facts aren't cut in half
+SIZE = 1400     # target characters per chunk (~250 words); keeps a typical entry in one piece
+OVERLAP = 150   # characters repeated between chunks so facts aren't cut in half
 
 
 def _split_long(paragraph: str, size: int) -> list[str]:

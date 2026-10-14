@@ -4,7 +4,7 @@ import AdminShell from "@/components/admin/AdminShell";
 // is not "instant" by design. Opt out of the dev-only validation for this segment.
 export const instant = false;
 
-export const metadata = { title: "Admin · Kaizerege & Kemebos AI Assistant" };
+export const metadata = { title: "Admin · Kaizirege & Kemebos AI Assistant" };
 
 export default function AdminLayout({ children }) {
   return <AdminShell>{children}</AdminShell>;

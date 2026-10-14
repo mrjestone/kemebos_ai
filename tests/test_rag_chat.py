@@ -37,7 +37,7 @@ def test_chunking():
     assert chunk_text("") == [] and chunk_text("short text") == ["short text"]
     long = "\n\n".join(f"Paragraph {i}. " + "word " * 60 for i in range(12))
     chunks = chunk_text(long)
-    assert len(chunks) > 2 and all(len(c) <= 1100 for c in chunks)
+    assert len(chunks) > 2 and all(len(c) <= 1700 for c in chunks)
     assert "Paragraph 0" in chunks[0] and "Paragraph 11" in chunks[-1]
 
 

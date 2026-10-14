@@ -13,7 +13,7 @@ export default function Header({ session, ready, onSignOut, onNewChat }) {
         <Link href="/chat" className="flex min-w-0 items-center gap-3 sm:gap-3.5">
           <Logo size={42} className="shrink-0" />
           <span className="min-w-0 leading-tight">
-            <span className="block truncate text-sm font-semibold min-[400px]:text-[15px] sm:text-base">Kaizerege &amp; Kemebos</span>
+            <span className="block truncate text-sm font-semibold min-[400px]:text-[15px] sm:text-base">Kaizirege &amp; Kemebos</span>
             <span className="mt-0.5 block whitespace-nowrap text-[11px] font-semibold uppercase tracking-[0.18em] text-crest-red">
               AI Assistant
             </span>

@@ -10,7 +10,7 @@ from .rag import embeddings
 from .routers import admin_docs, admin_users, auth, chat
 
 app = FastAPI(
-    title="Kaizerege & Kemebos AI Assistant API",
+    title="Kaizirege & Kemebos AI Assistant API",
     docs_url="/api/docs",
     openapi_url="/api/openapi.json",
     redoc_url=None,

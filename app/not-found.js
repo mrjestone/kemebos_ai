@@ -1,7 +1,7 @@
 import Link from "next/link";
 import Brand from "@/components/Brand";
 
-export const metadata = { title: "Page not found · Kaizerege & Kemebos AI Assistant" };
+export const metadata = { title: "Page not found · Kaizirege & Kemebos AI Assistant" };
 
 export default function NotFound() {
   return (

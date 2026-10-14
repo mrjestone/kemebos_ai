@@ -1,6 +1,6 @@
 <p align="center"><img src="public/logo.png" alt="Kemebos crest" width="105"></p>
 
-# Kaizerege & Kemebos AI Assistant
+# Kaizirege & Kemebos AI Assistant
 
 A bilingual (English / Kiswahili) assistant for a school. Anyone can ask public questions; approved members get private answers. Built to demonstrate a full retrieval-augmented-generation (RAG) system with role-based access control.
 

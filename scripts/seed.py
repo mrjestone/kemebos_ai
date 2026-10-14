@@ -1,7 +1,8 @@
 """Load the sample knowledge into MongoDB (embeds it with Gemini).
 
-    python -m scripts.seed            # add entries that are missing
-    python -m scripts.seed --reset    # delete all seed entries first, then reload
+    python -m scripts.seed                                   # add entries that are missing
+    python -m scripts.seed --reset                           # delete all seed entries first, then reload
+    python -m scripts.seed --file data/school_public.json --reset   # load a different knowledge file
 
 Also creates the first admin from ADMIN_EMAIL / ADMIN_PASSWORD.
 """
@@ -31,7 +32,7 @@ def ensure_vector_index(db) -> None:
     print(f"Created vector index '{store.VECTOR_INDEX}' ({settings.embed_dims} dims, cosine, filter: access).")
 
 
-def main(reset: bool = False) -> None:
+def main(reset: bool = False, path: Path = DATA) -> None:
     db = get_db()
     ensure_indexes(db)
     ensure_admin(db)
@@ -43,7 +44,7 @@ def main(reset: bool = False) -> None:
 
     ensure_vector_index(db)
 
-    entries = json.loads(DATA.read_text(encoding="utf-8"))["entries"]
+    entries = json.loads(path.read_text(encoding="utf-8"))["entries"]
     existing = {d["title"] for d in db.documents.find({"kind": "seed"}, {"title": 1})}
     added = 0
     for e in entries:
@@ -56,4 +57,6 @@ def main(reset: bool = False) -> None:
 
 
 if __name__ == "__main__":
-    main(reset="--reset" in sys.argv)
+    args = sys.argv[1:]
+    file = Path(args[args.index("--file") + 1]) if "--file" in args else DATA
+    main(reset="--reset" in args, path=file)

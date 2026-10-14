@@ -6,7 +6,7 @@ export default function Brand({ size = 92, className = "" }) {
     <div className={`flex flex-col items-center text-center ${className}`}>
       <Logo size={size} />
       <p className="mt-4 text-xl font-semibold leading-tight">
-        Kaizerege &amp; Kemebos
+        Kaizirege &amp; Kemebos
       </p>
       <p className="mt-0.5 text-sm font-semibold uppercase tracking-[0.18em] text-crest-red">
         AI Assistant

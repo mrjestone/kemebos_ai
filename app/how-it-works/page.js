@@ -1,7 +1,7 @@
 import Link from "next/link";
 import Logo from "@/components/Logo";
 
-export const metadata = { title: "How it works · Kaizerege & Kemebos AI Assistant" };
+export const metadata = { title: "How it works · Kaizirege & Kemebos AI Assistant" };
 
 const STEPS = [
   { title: "You ask", text: "In English or Kiswahili, in your own words." },
@@ -51,7 +51,7 @@ export default function HowItWorks() {
           <Link href="/chat" className="flex items-center gap-3">
             <Logo size={42} />
             <span className="leading-tight">
-              <span className="block text-[15px] font-semibold sm:text-base">Kaizerege &amp; Kemebos</span>
+              <span className="block text-[15px] font-semibold sm:text-base">Kaizirege &amp; Kemebos</span>
               <span className="mt-0.5 block whitespace-nowrap text-[11px] font-semibold uppercase tracking-[0.18em] text-crest-red">AI Assistant</span>
             </span>
           </Link>

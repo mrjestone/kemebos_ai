@@ -4,9 +4,9 @@ import "./globals.css";
 const inter = Inter({ variable: "--font-inter", subsets: ["latin"] });
 
 export const metadata = {
-  title: "Kaizerege & Kemebos AI Assistant",
+  title: "Kaizirege & Kemebos AI Assistant",
   description:
-    "Ask anything about Kaizerege & Kemebos schools, in English or Kiswahili.",
+    "Ask anything about Kaizirege & Kemebos schools, in English or Kiswahili.",
 };
 
 export const viewport = {
