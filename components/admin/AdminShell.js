@@ -7,7 +7,7 @@ import Tabs from "./Tabs";
 import Toast from "./Toast";
 
 function Guard({ children }) {
-  const { session, ready, signOut } = useAdmin();
+  const { session, ready, signOut, loadError, reload } = useAdmin();
 
   if (!ready) return <div className="min-h-dvh bg-white" />;
 
@@ -39,6 +39,12 @@ function Guard({ children }) {
       <Header session={session} ready onSignOut={signOut} />
       <main className="mx-auto w-full max-w-5xl px-4 pb-24 pt-8 sm:px-8">
         <Tabs />
+        {loadError && (
+          <div className="mt-6 flex items-center justify-between gap-3 rounded-xl bg-red-50 px-4 py-3 text-sm text-crest-red-dark">
+            <span>Couldn&apos;t load the data.</span>
+            <button onClick={reload} className="rounded-full bg-white px-3.5 py-1.5 font-semibold shadow-sm">Try again</button>
+          </div>
+        )}
         <div className="mt-8">{children}</div>
       </main>
       <Toast />

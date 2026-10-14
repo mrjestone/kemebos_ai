@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { ago } from "@/lib/mockAdminData";
+import { agoFrom } from "@/lib/mockAdminData";
 import { useAdmin } from "./AdminProvider";
 import { Avatar, GhostButton, PrimaryButton, SelectField } from "./ui";
 
@@ -21,7 +21,7 @@ export default function ApprovalRow({ user, compact = false }) {
           <p className="truncate font-semibold">{user.name}</p>
           <p className="truncate text-sm text-muted">{user.email}</p>
           <p className="mt-0.5 text-xs text-muted">
-            Requested <span className="capitalize">{user.role}</span> · {ago(user.minutesAgo)}
+            Requested <span className="capitalize">{user.role}</span> · {agoFrom(user.createdAt)}
           </p>
         </div>
       </div>

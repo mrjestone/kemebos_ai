@@ -56,3 +56,24 @@ An AI assistant for a school (Kaizerege & Kemebos) that answers questions about 
 - Note: Next 16 cacheComponents keeps previously visited routes mounted (hidden) so tests must count only visible elements.
 - Chat fixes done: whole-word keyword matching, `/` -> /chat, profile menu in header, mobile polish.
 - STILL TODO (frontend): chat New-chat/copy/error+retry/pending banner, RAG inspector panel, "How it works" page, 404 page. THEN backend.
+
+## Backend (built, FastAPI + MongoDB/PyMongo) — decisions & status
+- Stack: FastAPI in `backend/` (entry `api/index.py`, `vercel.json` rewrites /api/* -> function). PyMongo, bcrypt, PyJWT (httpOnly cookie), httpx. Python deps in requirements.txt (+ requirements-dev.txt).
+- Layout: backend/{config,db,security,deps,schemas,access}.py, routers/{auth,admin_users,admin_docs,chat}.py, rag/{chunking,embeddings,store,ingest,retrieve,prompt}.py, llm/{gemini,groq,router,health}.py. Tests: tests/ (19 pass, in-memory Mongo + fakes). Seed: data/knowledge.json + scripts/seed.py. Local no-Atlas dev: `python -m scripts.dev_local`.
+- Access levels: public < student < staff < admin (guest sees public only). Filtering happens INSIDE the vector search, and a second search over blocked levels only detects "restricted" (its text never reaches model/browser). Restricted answers use a separate short system prompt.
+- Retrieval: Atlas $vectorSearch (index `chunks_vector`: vector 768 cosine on `embedding` + filter on `access`) with automatic fallback to an in-Python cosine scan. Calibrated: min_score 0.62, rel_margin 0.08, denied_margin 0.05 (env-tunable).
+- LLM: Gemini models list (GEMINI_CHAT_MODELS) with thinkingLevel=minimal (Gemini 3.x "thinks" by default = +seconds), 45 s circuit breaker per model, then Groq gpt-oss-120b fallback. Measured: ~1 s retrieval + ~1.3 s first token. Gemini 3.1 flash-lite and 3.7/3.8 flash returned 503 (overloaded) on 2026-10-14.
+- Embeddings: gemini-embedding-001 @768 dims, task types RETRIEVAL_DOCUMENT/QUERY, normalised; query embeddings LRU-cached.
+- SSE protocol (/api/chat): `meta` {sources, denied, inspector(admin only)} -> `token` {t} ... -> `done` | `error` {code}.
+- Upload limit 4 MB (Vercel body cap 4.5 MB). Formats: JSON (many entries), MD, TXT, PDF (text-based), DOCX.
+- ADMIN_EMAIL must be a normal-looking email (placeholder .test is fine for login but sign-up validation rejects reserved domains).
+- TODO: wire frontend to API (lib/api.js, keep mock behind NEXT_PUBLIC_USE_MOCK), Atlas vector index + MONGODB_URI, seed Atlas, Vercel env vars, test SSE on Vercel, chat extras, RAG inspector UI, How-it-works page, admin password reset UI, Knowledge tab, architecture docs.
+
+## STATUS (2026-10-14, end of build session)
+- Frontend fully wired to the real API through lib/services (real.js | mock.js, switch NEXT_PUBLIC_USE_MOCK). Chat: SSE streaming + smooth typing effect, Copy, New chat, retry on error, admin-only Retrieval inspector. Admin: approvals (undo), users (roles, suspend, reset password), Knowledge (upload files, write entries, edit, retry, access tag, delete). Pages: /how-it-works, 404.
+- Backend verified against REAL Atlas + Gemini: signup -> pending -> approve -> login -> role-filtered chat; Atlas $vectorSearch with access filter works (index `chunks_vector`, created by scripts/seed.py). Atlas scores are (1+cos)/2 -> converted back to cosine so thresholds (min 0.62, margin 0.05) are consistent.
+- Seeded Atlas with data/knowledge.json (14 sample entries) + admin from ADMIN_EMAIL/ADMIN_PASSWORD.
+- Tests: 28 pass (pytest, in-memory Mongo, fakes). Browser end-to-end scripts were run through Chrome DevTools (not committed).
+- Performance: ~1 s retrieval + ~1.3 s first word when warm. COLD start (new process) cost ~13 s for the Atlas connection + first Gemini call; mitigated by /api/warmup called when the chat page opens. Pick a Vercel region near the Atlas cluster region.
+- Deploy checklist: Vercel env vars (all in .env.example, NEXT_PUBLIC_USE_MOCK=false), redeploy, then test SSE streaming on the deployed site (risk: platform buffering; fallback = non-streaming), test cold start.
+- Known gaps / ideas: no login rate limiting; sources shown are retrieved chunks (not model-cited); 4 MB upload cap (platform body limit); free-tier limits of Gemini unknown (fallback to Groq 8K TPM).

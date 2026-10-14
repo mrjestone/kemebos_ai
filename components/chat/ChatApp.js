@@ -5,20 +5,10 @@ import Header from "./Header";
 import Message from "./Message";
 import Composer from "./Composer";
 import EmptyState from "./EmptyState";
-import { answerQuestion } from "@/lib/mockKnowledge";
-import { clearSession, getSession } from "@/lib/mockSession";
+import { auth, chatStream, warmup } from "@/lib/services";
 
+let nextId = 1;
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
-
-// MOCK ONLY: simulates the token stream the Flask SSE endpoint will provide.
-async function* mockStream(text, signal) {
-  await sleep(700); // "retrieving + thinking"
-  for (const word of text.split(/(\s+)/)) {
-    if (signal.aborted) return;
-    yield word;
-    await sleep(35);
-  }
-}
 
 export default function ChatApp() {
   const [session, setSession] = useState(null);
@@ -30,49 +20,88 @@ export default function ChatApp() {
   const bottomRef = useRef(null);
 
   useEffect(() => {
-    setSession(getSession());
-    setReady(true);
+    warmup();
+    auth
+      .me()
+      .then(setSession)
+      .catch(() => setSession(null))
+      .finally(() => setReady(true));
   }, []);
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth", block: "end" });
   }, [messages]);
 
-  async function send(text = input) {
+  const patch = (id, fn) => setMessages((m) => m.map((x) => (x.id === id ? { ...x, ...fn(x) } : x)));
+
+  async function send(text = input, base = messages) {
     const question = text.trim();
     if (!question || streaming) return;
     setInput("");
 
-    const id = Date.now();
-    const answer = answerQuestion(question, session?.role ?? "guest");
-    setMessages((m) => [
-      ...m,
-      { id, role: "user", text: question },
-      { id: id + 1, role: "assistant", text: "", sources: answer.sources, denied: answer.denied },
-    ]);
+    // The model only sees the recent, successful turns.
+    const history = base
+      .filter((m) => m.text && !m.error)
+      .slice(-12)
+      .map((m) => ({ role: m.role, text: m.text }));
+
+    const userId = nextId++;
+    const botId = nextId++;
+    setMessages([...base, { id: userId, role: "user", text: question }, { id: botId, role: "assistant", text: "", sources: [] }]);
 
     const controller = new AbortController();
     abortRef.current = controller;
     setStreaming(true);
-    for await (const chunk of mockStream(answer.text, controller.signal)) {
-      setMessages((m) =>
-        m.map((msg) => (msg.id === id + 1 ? { ...msg, text: msg.text + chunk } : msg)),
-      );
+
+    // Providers send text in a few big chunks. Reveal it at a steady pace instead, faster
+    // when there is a lot waiting, so it always reads like typing.
+    let pending = "";
+    const timer = setInterval(() => {
+      if (!pending) return;
+      const n = Math.max(2, Math.ceil(pending.length * 0.1));
+      const piece = pending.slice(0, n);
+      pending = pending.slice(n);
+      patch(botId, (m) => ({ text: m.text + piece }));
+    }, 30);
+
+    try {
+      for await (const { event, data } of chatStream({ message: question, history, signal: controller.signal })) {
+        if (event === "meta") patch(botId, () => ({ sources: data.sources, denied: data.denied, inspector: data.inspector }));
+        else if (event === "token") pending += data.t;
+        else if (event === "done") patch(botId, () => ({ provider: data.provider, totalMs: data.totalMs }));
+        else if (event === "error") patch(botId, () => ({ error: data.code }));
+      }
+      while (pending && !controller.signal.aborted) await sleep(30); // let the typing finish
+    } finally {
+      clearInterval(timer); // Stop drops whatever hasn't been shown yet
+      setStreaming(false);
     }
+  }
+
+  function retry(failedId) {
+    const i = messages.findIndex((m) => m.id === failedId);
+    const question = messages[i - 1]?.text;
+    if (question) send(question, messages.slice(0, i - 1));
+  }
+
+  function newChat() {
+    abortRef.current?.abort();
+    setMessages([]);
+    setInput("");
     setStreaming(false);
   }
 
-  function signOut() {
-    clearSession();
+  async function signOut() {
+    await auth.logout();
     setSession(null);
-    setMessages([]);
+    newChat();
   }
 
   const last = messages[messages.length - 1];
 
   return (
     <div className="flex h-dvh flex-col bg-white">
-      <Header session={session} ready={ready} onSignOut={signOut} />
+      <Header session={session} ready={ready} onSignOut={signOut} onNewChat={messages.length ? newChat : undefined} />
 
       <div className="flex-1 overflow-y-auto">
         <div className="mx-auto h-full w-full max-w-3xl px-4 sm:px-8">
@@ -81,7 +110,7 @@ export default function ChatApp() {
           ) : (
             <div className="space-y-8 py-8 sm:py-10" aria-live="polite">
               {messages.map((m) => (
-                <Message key={m.id} message={m} streaming={streaming && m === last} />
+                <Message key={m.id} message={m} streaming={streaming && m === last} onRetry={() => retry(m.id)} />
               ))}
               <div ref={bottomRef} />
             </div>
@@ -89,13 +118,7 @@ export default function ChatApp() {
         </div>
       </div>
 
-      <Composer
-        value={input}
-        onChange={setInput}
-        onSend={() => send()}
-        onStop={() => abortRef.current?.abort()}
-        streaming={streaming}
-      />
+      <Composer value={input} onChange={setInput} onSend={() => send()} onStop={() => abortRef.current?.abort()} streaming={streaming} />
     </div>
   );
 }

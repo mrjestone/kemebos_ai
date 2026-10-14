@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { SUGGESTIONS } from "@/lib/mockKnowledge";
 
 export default function EmptyState({ session, onPick }) {
@@ -32,6 +33,10 @@ export default function EmptyState({ session, onPick }) {
           </button>
         ))}
       </div>
+
+      <Link href="/how-it-works" className="mt-8 inline-block rounded-full px-4 py-2.5 text-sm font-semibold text-muted transition hover:text-crest-red">
+        How does this work?
+      </Link>
     </div>
   );
 }

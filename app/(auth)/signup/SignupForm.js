@@ -5,14 +5,13 @@ import { useState } from "react";
 import Field from "@/components/auth/Field";
 import Notice from "@/components/auth/Notice";
 import SubmitButton from "@/components/auth/SubmitButton";
+import { auth } from "@/lib/services";
 
-// MOCK ONLY: replaced by POST /api/auth/signup. The account is created with
-// status "pending"; an admin approves it before private info is unlocked.
-async function mockSignup({ email }) {
-  await new Promise((r) => setTimeout(r, 1000));
-  if (email.includes("taken")) return { ok: false, text: "Email already registered." };
-  return { ok: true };
-}
+const ERRORS = {
+  email_taken: "Email already registered.",
+  validation: "Please check your details and try again.",
+  network: "Can't reach the server. Check your connection.",
+};
 
 const ROLES = [
   { value: "student", label: "Student" },
@@ -33,10 +32,13 @@ export default function SignupForm() {
     e.preventDefault();
     setLoading(true);
     setError(null);
-    const res = await mockSignup(form);
+    try {
+      await auth.signup({ ...form, name: form.name.trim(), email: form.email.trim() });
+      setDone(true);
+    } catch (err) {
+      setError(ERRORS[err.code] ?? "Something went wrong. Please try again.");
+    }
     setLoading(false);
-    if (res.ok) setDone(true);
-    else setError(res.text);
   }
 
   if (done) {

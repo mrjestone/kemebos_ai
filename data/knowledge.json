@@ -1,0 +1,33 @@
+{
+  "_note": "SAMPLE DATA for development and the demo. Replace with the real school information.",
+  "entries": [
+    {"title": "Parents Day", "access": "public",
+     "content": "Parents Day is held on the last Saturday of every term, starting at 9:00 am in the main hall. Parents meet the class teachers, see their children's exercise books and projects, and discuss progress. Please arrive by 8:45 am and sign in at the school gate. Siku ya Wazazi hufanyika Jumamosi ya mwisho ya kila muhula, kuanzia saa 3:00 asubuhi katika ukumbi mkuu."},
+    {"title": "Admission Guide", "access": "public",
+     "content": "To apply for a place, collect an admission form from the school office (Monday to Friday, 8:00 am to 4:00 pm) and return it with a copy of the child's birth certificate and two passport-size photos. Shortlisted pupils are invited for a short interview and a simple placement test. Applications for the new school year open in October and close at the end of November. Parents are notified of the outcome by phone or letter within two weeks of the interview."},
+    {"title": "School Hours", "access": "public",
+     "content": "Lessons run from 7:30 am to 4:00 pm, Monday to Friday. Pupils should be at school by 7:15 am for morning assembly. The school office is open from 7:00 am to 5:00 pm on weekdays and is closed on weekends and public holidays. Morning break is at 10:00 am and lunch is from 12:30 pm to 1:30 pm."},
+    {"title": "Contact and Location", "access": "public",
+     "content": "Kaizerege & Kemebos School is in Bukoba, Kagera Region, Tanzania. Postal address: P.O. Box 1054, Bukoba. Parents and visitors are welcome at the school office during office hours; all visitors must sign in at the gate and wear a visitor badge. For urgent matters during school hours, call the school office. Kemebos is an English-medium primary school: education for outstanding heights."},
+    {"title": "School Uniform", "access": "public",
+     "content": "The school uniform is a white shirt or blouse, navy blue shorts or skirt, white socks and black shoes. On sports days pupils wear the school T-shirt and tracksuit. Uniforms must be clean and labelled with the pupil's name. Sweaters in school colours are allowed in the cold season. Parents can buy uniforms from approved tailors; the school office can give the list."},
+    {"title": "Term Calendar", "access": "public",
+     "content": "The school year has three terms. Term one runs from January to April, term two from May to August and term three from September to early December, with short holidays between terms. Mid-term breaks are one week in each term. Exact opening and closing dates are announced by letter at least two weeks before each term ends. Public holidays follow the national calendar."},
+    {"title": "Health and Safety", "access": "public",
+     "content": "A first-aid room is open throughout school hours with a trained staff member. Pupils who fall sick are cared for and their parents are called immediately. Parents must inform the class teacher about any allergy or long-term medical condition. Pupils are released only to parents or to adults named on the pick-up list. Fire drills are held once every term."},
+    {"title": "Fee Payment Procedure", "access": "student",
+     "content": "School fees are paid through the school bank account, never in cash to a teacher. After paying, bring the bank slip to the bursar's office, where it is checked and stamped and a school receipt is issued. Fees for each term must be paid before the end of the second week of the term. Parents who cannot pay on time should meet the bursar to agree a payment plan. Keep the stamped receipt: it is needed for exams and report collection."},
+    {"title": "Exam Timetable and Rules", "access": "student",
+     "content": "End-of-term examinations start in the second-last week of the term. Pupils must carry their exam card, arrive 20 minutes early and bring their own pens, pencils and ruler. Pupils with unpaid fees must show proof of a payment plan before sitting exams. Mobile phones are not allowed in the exam room. Results are given out on report collection day, which is the last day of the term."},
+    {"title": "Library and Homework Rules", "access": "student",
+     "content": "The library is open to pupils from 7:30 am to 8:00 am and during lunch break. Each pupil may borrow two books for one week. Lost books must be replaced or paid for. Homework is given from Monday to Thursday and should take no more than one hour for upper classes. Pupils who miss homework must bring a note from their parent."},
+    {"title": "Staff Leave Procedure", "access": "staff",
+     "content": "Staff request leave by submitting the leave form to the head teacher at least one week in advance, except for emergencies and illness. Approval is confirmed in writing. For sick leave of more than two days a medical note is required. Teachers who are away must leave lesson plans with the academic master so that classes are covered. Annual leave is taken during school holidays unless the head teacher agrees otherwise."},
+    {"title": "Finance and Budget Policy", "access": "staff",
+     "content": "Departments submit their budget requests to the bursar by the end of the first month of each term. The head teacher reviews all requests and the bursar issues approved funds against receipts. Purchases above a set limit need two written quotations. Staff must never use school funds without a signed requisition. Unspent departmental funds are reported at the end of the term."},
+    {"title": "Staff Duty Roster and Meetings", "access": "staff",
+     "content": "Staff meetings are held every second Friday at 4:15 pm in the staff room. Teachers on duty arrive by 7:00 am to supervise arrival and stay until the last pupil has left. The duty roster is posted on the staff notice board each term. Teachers must submit schemes of work to the academic master in the first week of the term."},
+    {"title": "Administrator Handbook", "access": "admin",
+     "content": "Administrators approve new accounts for students and staff, assign roles, and manage the school knowledge base. Documents are tagged public, student, staff or admin so that each person only sees what they are allowed to. Passwords are reset by an administrator, who gives the user a temporary password. Review the list of pending accounts at least once every day during admission season."}
+  ]
+}

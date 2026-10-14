@@ -10,7 +10,7 @@ export default function Toast() {
       <div
         key={toast.id}
         role="status"
-        className="float-in pointer-events-auto flex items-center gap-4 rounded-full bg-ink py-3 pl-6 pr-3 text-sm font-medium text-white shadow-2xl shadow-black/30"
+        className={`float-in pointer-events-auto flex items-center gap-4 rounded-full py-3 pl-6 pr-3 text-sm font-medium text-white shadow-2xl shadow-black/30 ${toast.tone === "error" ? "bg-crest-red-dark" : "bg-ink"}`}
       >
         <span>{toast.text}</span>
         {toast.undo ? (

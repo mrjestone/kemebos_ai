@@ -5,7 +5,7 @@ import { usePathname } from "next/navigation";
 import Logo from "@/components/Logo";
 import UserMenu from "./UserMenu";
 
-export default function Header({ session, ready, onSignOut }) {
+export default function Header({ session, ready, onSignOut, onNewChat }) {
   const inAdmin = usePathname().startsWith("/admin");
   return (
     <header className="relative z-10 bg-white shadow-[0_1px_16px_rgba(27,36,51,0.06)]">
@@ -20,6 +20,20 @@ export default function Header({ session, ready, onSignOut }) {
           </span>
         </Link>
 
+        <div className="flex items-center gap-2 sm:gap-3">
+        {onNewChat && (
+          <button
+            onClick={onNewChat}
+            aria-label="New chat"
+            title="New chat"
+            className="flex h-11 items-center justify-center gap-2 rounded-full px-3 text-sm font-semibold text-muted transition hover:bg-field hover:text-ink sm:px-4"
+          >
+            <svg viewBox="0 0 24 24" className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+              <path d="M12 5v14M5 12h14" />
+            </svg>
+            <span className="hidden sm:inline">New chat</span>
+          </button>
+        )}
         {!ready ? (
           <span className="h-11 w-24" aria-hidden />
         ) : session ? (
@@ -51,6 +65,7 @@ export default function Header({ session, ready, onSignOut }) {
             Sign in
           </Link>
         )}
+        </div>
       </div>
     </header>
   );

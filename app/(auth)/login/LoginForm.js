@@ -3,24 +3,17 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { clearSession, sessionFromEmail, setSession } from "@/lib/mockSession";
+import { auth } from "@/lib/services";
 import Field from "@/components/auth/Field";
 import Notice from "@/components/auth/Notice";
 import SubmitButton from "@/components/auth/SubmitButton";
 
-// MOCK ONLY: replaced by POST /api/auth/login once the Flask backend exists.
-// Try: "pending" in the email -> awaiting approval, "wrong" in the password
-// -> bad credentials, otherwise success.
-async function mockLogin({ email, password }) {
-  await new Promise((r) => setTimeout(r, 900));
-  if (email.includes("pending")) return { ok: false, code: "pending" };
-  if (password.includes("wrong")) return { ok: false, code: "invalid" };
-  return { ok: true };
-}
-
 const MESSAGES = {
   invalid: { tone: "error", text: "Wrong email or password." },
   pending: { tone: "info", text: "Awaiting admin approval." },
+  blocked: { tone: "error", text: "This account is not active." },
+  network: { tone: "error", text: "Can't reach the server. Check your connection." },
+  default: { tone: "error", text: "Something went wrong. Please try again." },
 };
 
 export default function LoginForm() {
@@ -34,17 +27,17 @@ export default function LoginForm() {
     e.preventDefault();
     setLoading(true);
     setResult(null);
-    const res = await mockLogin({ email, password });
-    setResult(res);
-    setLoading(false);
-    if (res.ok) {
-      const session = sessionFromEmail(email);
-      setSession(session);
-      router.push(session.role === "admin" ? "/admin" : "/chat");
+    try {
+      const user = await auth.login({ email: email.trim(), password });
+      setResult({ ok: true });
+      router.push(user.role === "admin" ? "/admin" : "/chat");
+    } catch (err) {
+      setResult({ ok: false, code: err.code });
+      setLoading(false);
     }
   }
 
-  const message = result && !result.ok ? MESSAGES[result.code] : null;
+  const message = result && !result.ok ? (MESSAGES[result.code] ?? MESSAGES.default) : null;
 
   return (
     <form onSubmit={onSubmit} className="mt-9 space-y-5" noValidate>
@@ -80,7 +73,7 @@ export default function LoginForm() {
 
       <Link
         href="/chat"
-        onClick={clearSession}
+        onClick={() => auth.logout()}
         className="block w-full rounded-xl bg-crest-blue-soft px-4 py-3.5 text-center text-[15px] font-semibold text-[#1d6bb3] transition hover:bg-crest-blue hover:text-white focus:outline-none focus-visible:shadow-[0_0_0_3px_rgba(63,143,217,0.4)]"
       >
         Continue as guest

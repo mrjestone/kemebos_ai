@@ -1,0 +1,10 @@
+fastapi
+pydantic[email]
+pymongo[srv]
+pyjwt
+bcrypt
+httpx
+python-multipart
+python-dotenv
+pypdf
+python-docx

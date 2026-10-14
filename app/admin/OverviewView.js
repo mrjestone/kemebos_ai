@@ -4,7 +4,7 @@ import Link from "next/link";
 import ApprovalRow from "@/components/admin/ApprovalRow";
 import { useAdmin } from "@/components/admin/AdminProvider";
 import { Empty, PageTitle, Pill } from "@/components/admin/ui";
-import { ago } from "@/lib/mockAdminData";
+import { agoFrom } from "@/lib/mockAdminData";
 
 function Stat({ label, value, href, accent }) {
   const body = (
@@ -29,8 +29,8 @@ export default function OverviewPage() {
       <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
         <Stat label="Waiting for approval" value={pending.length} href="/admin/approvals" accent={pending.length > 0} />
         <Stat label="Active users" value={active} href="/admin/users" />
-        <Stat label="Documents" value={docs.length} href="/admin/documents" />
-        <Stat label="Private documents" value={privateDocs} href="/admin/documents" />
+        <Stat label="Knowledge entries" value={docs.length} href="/admin/documents" />
+        <Stat label="Private entries" value={privateDocs} href="/admin/documents" />
       </div>
 
       <div className="mt-10 grid gap-10 lg:grid-cols-2">
@@ -48,13 +48,13 @@ export default function OverviewPage() {
         </section>
 
         <section>
-          <h2 className="mb-4 text-lg font-semibold">Recent documents</h2>
+          <h2 className="mb-4 text-lg font-semibold">Recent knowledge</h2>
           <ul className="space-y-2">
             {docs.slice(0, 5).map((d) => (
               <li key={d.id} className="flex items-center justify-between gap-3 rounded-2xl bg-field px-5 py-4">
                 <div className="min-w-0">
                   <p className="truncate font-medium">{d.title}</p>
-                  <p className="text-xs text-muted">{ago(d.minutesAgo)}</p>
+                  <p className="text-xs text-muted">{agoFrom(d.createdAt)}</p>
                 </div>
                 <Pill kind={d.access} />
               </li>

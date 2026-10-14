@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useAdmin } from "@/components/admin/AdminProvider";
 import { Avatar, GhostButton, PageTitle, Pill, PrimaryButton, SelectField } from "@/components/admin/ui";
-import { ago } from "@/lib/mockAdminData";
+import { agoFrom } from "@/lib/mockAdminData";
 
 const FILTERS = [
   { id: "all", label: "All", test: () => true },
@@ -21,9 +21,26 @@ const ROLES = [
 ];
 
 export default function UsersPage() {
-  const { users, setUserRole, approveUser, suspendUser, reactivateUser } = useAdmin();
+  const { users, setUserRole, approveUser, suspendUser, reactivateUser, resetPassword } = useAdmin();
   const [filter, setFilter] = useState("all");
   const [query, setQuery] = useState("");
+  const [revealed, setRevealed] = useState(null); // { name, password } shown once after a reset
+  const [copied, setCopied] = useState(false);
+
+  async function reset(user) {
+    const password = await resetPassword(user.id);
+    if (password) {
+      setRevealed({ name: user.name, password });
+      setCopied(false);
+    }
+  }
+
+  async function copy() {
+    try {
+      await navigator.clipboard.writeText(revealed.password);
+      setCopied(true);
+    } catch {}
+  }
 
   const test = FILTERS.find((f) => f.id === filter).test;
   const q = query.trim().toLowerCase();
@@ -32,6 +49,19 @@ export default function UsersPage() {
   return (
     <>
       <PageTitle>Users</PageTitle>
+
+      {revealed && (
+        <div role="status" className="mb-5 flex flex-col gap-3 rounded-2xl bg-emerald-50 p-4 text-emerald-900 sm:flex-row sm:items-center sm:justify-between">
+          <div className="min-w-0">
+            <p className="text-sm">Temporary password for {revealed.name}. Shown once; give it to them privately.</p>
+            <p className="mt-1 break-all font-mono text-lg font-semibold">{revealed.password}</p>
+          </div>
+          <div className="flex gap-2">
+            <GhostButton onClick={copy}>{copied ? "Copied" : "Copy"}</GhostButton>
+            <GhostButton onClick={() => setRevealed(null)}>Done</GhostButton>
+          </div>
+        </div>
+      )}
 
       <input
         type="search"
@@ -68,7 +98,7 @@ export default function UsersPage() {
                 <p className="truncate font-semibold">
                   {u.name} {u.isYou && <span className="font-normal text-muted">(you)</span>}
                 </p>
-                <p className="truncate text-sm text-muted">{u.isYou ? "Signed in" : `${u.email} · ${ago(u.minutesAgo)}`}</p>
+                <p className="truncate text-sm text-muted">{u.isYou ? "Signed in" : `${u.email} · ${agoFrom(u.createdAt)}`}</p>
               </div>
             </div>
 
@@ -83,9 +113,12 @@ export default function UsersPage() {
                 className="min-w-36"
               />
               {u.isYou ? null : u.status === "approved" ? (
-                <GhostButton tone="danger" onClick={() => suspendUser(u.id)}>
-                  Suspend
-                </GhostButton>
+                <>
+                  <GhostButton onClick={() => reset(u)}>Reset password</GhostButton>
+                  <GhostButton tone="danger" onClick={() => suspendUser(u.id)}>
+                    Suspend
+                  </GhostButton>
+                </>
               ) : u.status === "suspended" ? (
                 <GhostButton onClick={() => reactivateUser(u.id)}>Reactivate</GhostButton>
               ) : (

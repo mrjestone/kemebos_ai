@@ -12,7 +12,7 @@ export default function Tabs() {
     { href: "/admin", label: "Overview" },
     { href: "/admin/approvals", label: "Approvals", badge: pending },
     { href: "/admin/users", label: "Users" },
-    { href: "/admin/documents", label: "Documents" },
+    { href: "/admin/documents", label: "Knowledge" },
   ];
   return (
     <nav aria-label="Admin sections">
