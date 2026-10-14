@@ -46,7 +46,7 @@ class Settings:
     # Calibrated on the sample data with gemini-embedding-001 (768 dims): relevant matches
     # score 0.65-0.76, unrelated text up to ~0.61. Re-check if the knowledge base changes a lot.
     min_score = float(os.getenv("RAG_MIN_SCORE", "0.62"))
-    rel_margin = float(os.getenv("RAG_REL_MARGIN", "0.05"))    # keep hits within this of the best hit
+    rel_margin = float(os.getenv("RAG_REL_MARGIN", "0.04"))    # keep hits within this of the best hit
     denied_margin = float(os.getenv("RAG_DENIED_MARGIN", "0.05"))  # restricted must beat allowed by this
     max_upload_bytes = _int("MAX_UPLOAD_BYTES", 4 * 1024 * 1024)  # Vercel body limit is 4.5 MB
 
