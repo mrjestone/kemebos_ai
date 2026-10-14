@@ -42,7 +42,7 @@ async def chat(body: ChatIn, user=Depends(current_user), database=Depends(db)):
             return
 
         denied = ("login" if role == "guest" else "role") if found["denied"] else None
-        sources = [] if denied else [_source(h) for h in found["hits"]]
+        sources = [_source(h) for h in found["hits"]] if role == "admin" and not denied else []  # only the admin inspector sees sources
         meta = {"sources": sources, "denied": denied or False}
         if role == "admin":  # the RAG inspector is admin-only, decided on the server
             meta["inspector"] = {

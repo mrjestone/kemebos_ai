@@ -1,3 +1,4 @@
+import re
 import io
 import json
 
@@ -30,7 +31,9 @@ def ask(client, text, history=None):
 
 
 def sources(events):
-    return [s["title"] for s in next(d for e, d in events if e == "meta")["sources"]]
+    """Titles of the entries that reached the model (the browser is not told which ones, except admins)."""
+    system = FakeLLM.calls[-1]["system"]
+    return re.findall(r"^\[\d+\] (.+)$", system, flags=re.M) if "CONTEXT:\n[" in system else []
 
 
 def test_chunking():
@@ -56,6 +59,15 @@ def test_guest_gets_public_only_and_private_text_never_leaves(admin):
     sent = json.dumps(FakeLLM.calls)
     assert "bursar" not in sent and "stamped" not in sent
     assert "restricted" in FakeLLM.calls[0]["system"] and "CONTEXT" not in FakeLLM.calls[0]["system"]
+
+
+def test_non_admins_are_never_told_the_sources(admin):
+    seed(admin)
+    meta = next(d for e, d in ask(admin, "When is parents day?") if e == "meta")
+    assert meta["sources"] == [] and meta["denied"] is False
+    sign_in(admin, "admin@school.org", "AdminPass123")
+    meta = next(d for e, d in ask(admin, "When is parents day?") if e == "meta")
+    assert [x["title"] for x in meta["sources"]] == ["Parents Day"]
 
 
 def test_student_sees_student_but_not_staff(client):

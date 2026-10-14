@@ -91,21 +91,6 @@ export default function Message({ message, streaming, onRetry }) {
           </Link>
         )}
 
-        {!streaming && message.sources?.length > 0 && (
-          <div className="mt-4 flex flex-wrap items-center gap-2">
-            <span className="text-xs font-medium text-muted">Sources</span>
-            {message.sources.map((s) => (
-              <span
-                key={s.id}
-                className="inline-flex items-center gap-1.5 rounded-full bg-field px-3 py-1 text-xs font-medium"
-              >
-                <span className={`h-1.5 w-1.5 rounded-full ${DOT[s.access]}`} />
-                {s.title}
-                <span className="capitalize text-muted">· {s.access}</span>
-              </span>
-            ))}
-          </div>
-        )}
         {!streaming && message.text && !message.error && (
           <div className="mt-2 flex items-center gap-2">
             <CopyButton text={message.text} />
